@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model with role-based access control
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  phone        String?
+  password     String?  // For traditional auth
+  avatar       String?
+  points       Int      @default(0)
+  level        String   @default("Beginner")
+  role         Role     @default(USER)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  organizerEvents Event[]
+  tickets       Ticket[]
+  transactions  Transaction[]
+}
+
+enum Role {
+  ADMIN
+  ORGANIZER
+  USER
+}
+
+// Event model for wrestling events
+model Event {
+  id               String      @id @default(uuid())
+  title            String
+  description      String?
+  date             DateTime
+  time             String
+  location         String
+  address          String
+  status           EventStatus @default(SCHEDULED)
+  heroImage        String?
+  totalTickets     Int
+  availableTickets Int
+  deadline         DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  // Relations
+  organizerId String?
+  organizer   User?      @relation(fields: [organizerId], references: [id])
+  tickets     Ticket[]
+  categories  TicketCategory[]
+}
+
+enum EventStatus {
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+// Ticket category model (VIP, Tribune, Pelouse)
+model TicketCategory {
+  id         String   @id @default(uuid())
+  name       String   // VIP, Tribune, Pelouse
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  price      Int
+  totalSeats Int
+  availableSeats Int
+  color      String?
+  
+  @@unique([eventId, name])
+}
+
+// Ticket model
+model Ticket {
+  id              String      @id @default(uuid())
+  qrCode          String      @unique  // Unique QR code for ticket validation
+  eventId         String
+  event           Event       @relation(fields: [eventId], references: [id])
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  categoryId      String
+  category        TicketCategory @relation(fields: [categoryId], references: [id])
+  status          TicketStatus @default(ACTIVE)
+  purchaseDate    DateTime?
+  validationDate  DateTime?
+  validationCount Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@index([eventId])
+  @@index([userId])
+  @@index([qrCode])
+}
+
+enum TicketStatus {
+  ACTIVE
+  VALIDATED
+  CANCELLED
+}
+
+// Transaction model
+model Transaction {
+  id            String         @id @default(uuid())
+  reference     String         @unique  // Payment provider reference
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  eventId       String
+  event         Event          @relation(fields: [eventId], references: [id])
+  ticketIds     String[]       // Array of ticket IDs in this transaction
+  amount        Int
+  currency      String         @default("XOF")
+  paymentMethod PaymentMethod
+  providerRef   String?        // Provider-specific reference
+  status        TransactionStatus @default(PENDING)
+  metadata      Json?          // Additional payment data
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  @@index([userId])
+  @@index([eventId])
+  @@index([reference])
+}
+
+enum PaymentMethod {
+  WAVE
+  ORANGE_MONEY
+  FREE_MONEY
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Site settings model
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+  type  SettingType @default(STRING)
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SettingType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}

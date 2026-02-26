@@ -3,6 +3,16 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/layout/BottomNav";
 import { cn } from "@/lib/utils";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1
+    }
+  }
+})
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,29 +48,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="h-full">
-      <body
-        className={cn(
-          inter.variable,
-          poppins.variable,
-          "font-inter antialiased bg-background text-foreground h-full overflow-x-hidden relative"
-        )}
-      >
-        {/* Background Watermark - Source: fond-lamb-source.png */}
-        <div
-          className="fixed inset-0 pointer-events-none opacity-[0.06] z-[-1]"
-          style={{
-            backgroundImage: "url(/fond-lamb.png)",
-            backgroundSize: "400px 400px",
-            backgroundPosition: "center",
-            backgroundRepeat: "repeat"
-          }}
-        />
+      <QueryClientProvider client={queryClient}>
+        <body
+          className={cn(
+            inter.variable,
+            poppins.variable,
+            "font-inter antialiased bg-background text-foreground h-full overflow-x-hidden relative"
+          )}
+        >
+          {/* Background Watermark - Source: fond-lamb-source.png */}
+          <div
+            className="fixed inset-0 pointer-events-none opacity-[0.06] z-[-1]"
+            style={{
+              backgroundImage: "url(/fond-lamb.png)",
+              backgroundSize: "400px 400px",
+              backgroundPosition: "center",
+              backgroundRepeat: "repeat"
+            }}
+          />
 
-        <main className="min-h-full pb-20 relative z-10">
-          {children}
-        </main>
-        <BottomNav />
-      </body>
+          <main className="min-h-full pb-20 relative z-10">
+            {children}
+          </main>
+          <BottomNav />
+        </body>
+      </QueryClientProvider>
     </html>
   );
 }

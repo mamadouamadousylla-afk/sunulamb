@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SunuLamb API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1B8B3D;
+            text-align: center;
+        }
+        .endpoint {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .btn {
+            background-color: #1B8B3D;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #0A5D28;
+        }
+        .response {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SunuLamb API Test</h1>
+        <p>Testing the backend API server running on http://localhost:5001</p>
+        
+        <div class="status success" id="server-status">Server Connection: Attempting to connect...</div>
+        
+        <div class="endpoint">
+            <h3>Test API Endpoints</h3>
+            <button class="btn" onclick="testHealth()">Test Health Check</button>
+            <button class="btn" onclick="getEvents()">Get Events</button>
+            <button class="btn" onclick="getTickets()">Get Tickets</button>
+            <div id="response" class="response"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>API Documentation</h3>
+            <p><strong>Base URL:</strong> http://localhost:5001/api</p>
+            <h4>Available Endpoints:</h4>
+            <ul>
+                <li>GET /api/events - Get all events</li>
+                <li>GET /api/tickets - Get all tickets</li>
+                <li>POST /api/auth/register - Register new user</li>
+                <li>POST /api/auth/login - Login user</li>
+                <li>GET /api/auth/me - Get current user</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:5001/api';
+        
+        // Test if server is reachable
+        async function testHealth() {
+            try {
+                document.getElementById('response').innerText = 'Testing server connection...';
+                
+                // Try to reach a basic endpoint
+                const response = await fetch(`${BASE_URL}/events`);
+                const data = await response.json();
+                
+                document.getElementById('response').innerHTML = `✓ Server reachable!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                document.getElementById('server-status').className = 'status success';
+                document.getElementById('server-status').innerText = 'Server Connection: SUCCESS - Running on http://localhost:5001';
+            } catch (error) {
+                document.getElementById('response').innerText = `✗ Server connection failed: ${error.message}`;
+                document.getElementById('server-status').className = 'status error';
+                document.getElementById('server-status').innerText = 'Server Connection: FAILED - Check if server is running on http://localhost:5001';
+            }
+        }
+        
+        async function getEvents() {
+            try {
+                const response = await fetch(`${BASE_URL}/events`);
+                const data = await response.json();
+                
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').innerText = `Error: ${error.message}`;
+            }
+        }
+        
+        async function getTickets() {
+            try {
+                const response = await fetch(`${BASE_URL}/tickets`);
+                const data = await response.json();
+                
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').innerText = `Error: ${error.message}`;
+            }
+        }
+        
+        // Test server on load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
