@@ -1,99 +1,81 @@
-# SunuLamb - Billetterie Lutte Sénégalaise 🥊🇸🇳
+# SunuLamb - Billetterie Lutte Sénégalaise
 
-SunuLamb est une application mobile-first de billetterie dédiée à la lutte sénégalaise. Elle offre une expérience ludique, premium et sécurisée pour tous les fans de l'arène.
+SunuLamb est une plateforme de billetterie pour la lutte sénégalaise, conçue pour faciliter l'accès aux combats traditionnels de Lékk Bi Lékk.
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
-- **Découverte** : Parcourez les prochains grands combats.
-- **Réservation intuitive** : Choisissez votre catégorie (VIP, Tribune, Pelouse) en un clic.
-- **Paiement Mobile** : Intégration simulée de Wave, Orange Money et Free Money.
-- **Tickets Numériques** : QR Code unique généré pour chaque accès.
-- **Gamification** : Système de points et messages de bienvenue en Wolof ("Jërejëf").
+- **Gestion des événements** : Création et gestion des combats de lutte
+- **Billetterie numérique** : Achats sécurisés avec génération de QR codes
+- **Systèmes de paiement mobile** : Intégration Wave, Orange Money, Free Money
+- **Interface utilisateur moderne** : Expérience mobile-first
+- **Gamification** : Système de points et récompenses en Wolof
 
-## 🚀 Installation locale
+## Structure du projet
 
-1. **Clonez le dépôt** (une fois poussé sur GitHub).
-2. **Installez les dépendances** :
-   ```bash
-   npm install
-   ```
-3. **Configurez les variables d'environnement** :
-   ```bash
-   cp .env.example .env.local
-   # Éditez .env.local avec vos propres valeurs
-   ```
-4. **Initialisez la base de données** :
-   ```bash
-   npx prisma migrate dev
-   ```
-5. **Lancez le serveur de développement** :
-   ```bash
-   npm run dev
-   ```
-6. **Ouvrez [http://localhost:3000](http://localhost:3000)** sur votre navigateur (mode mobile recommandé).
+- `src/` - Application Next.js principale
+- `admin-panel/` - Panneau d'administration autonome (fonctionnel)
+- `backend/` - API backend Node.js/Express (fonctionnel)
 
-## 🏗️ Architecture Production
+## Panneau d'administration autonome
 
-Ce projet comprend une architecture complète pour la production :
+Le panneau d'administration complet se trouve dans le dossier `admin-panel/` et est entièrement fonctionnel :
 
-### 1. Base de données (PostgreSQL)
-- Modèles pour utilisateurs, événements, tickets et transactions
-- Contrôle d'accès basé sur les rôles (ADMIN, ORGANISATEUR, UTILISATEUR)
-- Gestion des paramètres dynamiques du site
+- Accès via http://localhost:5002 après démarrage
+- Authentification administrateur
+- Gestion des événements de lutte
+- Suivi des ventes de billets
+- Gestion des utilisateurs
+- Tableau de bord analytique
 
-### 2. Authentification & Autorisation
-- NextAuth.js avec support multi-fournisseurs
-- Contrôle d'accès basé sur les rôles
-- Sessions sécurisées
-
-### 3. Panneau d'administration
-- Tableau de bord avec statistiques en temps réel
-- Gestion des événements et des utilisateurs
-- Suivi des transactions
-- Système de gestion de contenu (CMS)
-
-### 4. Intégrations de paiement
-- Agrégateur de paiement (Hub2, PayTech ou API directe)
-- Webhooks pour la génération automatique de tickets
-- Support pour Wave, Free Money et Orange Money
-
-### 5. Services de communication
-- Gateway SMS pour l'envoi de codes QR
-- Service SMTP pour les emails transactionnels
-- Notifications push
-
-## 📁 Structure du projet
-
-```
-src/
-├── app/                 # Routes Next.js
-│   ├── admin/          # Panneau d'administration
-│   ├── api/            # Endpoints API
-│   └── ...             # Autres pages
-├── components/         # Composants réutilisables
-│   ├── admin/          # Composants admin
-│   ├── ui/             # Composants UI
-│   └── ...             # Autres composants
-├── lib/               # Utilitaires et bibliothèques
-├── services/          # Services métier
-└── auth/              # Configuration d'authentification
+Pour le démarrer :
+```bash
+cd admin-panel
+npm install
+node server.js
 ```
 
-## 🛠️ Scripts disponibles
+## Backend API
 
-- `npm run dev` - Démarre le serveur de développement
-- `npm run build` - Construit l'application pour la production
-- `npm run start` - Démarre le serveur de production
-- `npm run db:migrate` - Applique les migrations de base de données
-- `npm run db:studio` - Ouvre Prisma Studio
+Un backend Node.js/Express complet est disponible dans le dossier `backend/` :
 
-## 🚢 Déploiement
+- Système d'authentification JWT
+- Gestion des événements
+- Gestion des billets avec codes QR
+- Intégration des paiements mobiles
+- Base de données MongoDB (ou base de données simulée)
 
-Le projet inclut un fichier Dockerfile pour le déploiement en production :
-- Image optimisée avec multi-stage build
-- Support pour les variables d'environnement
-- Prêt pour les plateformes cloud (Vercel, AWS, GCP, etc.)
+Pour le démarrer :
+```bash
+cd backend
+npm install
+npm run dev
+```
 
----
+## Installation
 
-*Sunu Lamb, Sunu Fierté !*
+1. Clonez le dépôt
+2. Installez les dépendances : `npm install`
+3. Créez un fichier `.env` basé sur `.env.example`
+4. Démarrez le développement : `npm run dev`
+
+## Technologies
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+- MongoDB
+- Node.js
+- Express
+
+## Déploiement
+
+Le projet peut être déployé sur Vercel ou tout autre service prenant en charge les applications Next.js.
+
+## Contribuer
+
+Les contributions sont les bienvenues ! Veuillez soumettre une Pull Request.
+
+## Licence
+
+Ce projet est sous licence MIT.
